@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kinshi@{{ width }}x{{ height }}</title>
+</head>
+<body>
+	<canvas id="screen"></canvas>
+<style>
+body {
+	font-family: monospace;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	background-color: black;
+}
+
+body * {
+	margin: 0;
+	padding: 0;
+}
+</style>
+<script>
+	function drawScreen() {
+		const canvas = document.getElementById("screen");
+		const ctx = canvas.getContext("2d");
+		colors = {{ colors|safe }}
+		pixels = {{ pixels }}
+		for (let h = 0; h < {{ height }}; h++) {
+			for (let w = 0; w < {{ width }}; w++) {
+				ctx.fillStyle = colors[pixels[h][w]];
+				ctx.fillRect(w, h, 1000, 1000);
+			}
+		}
+	}
+
+	drawScreen();
+</script>
+</body>
+</html>
