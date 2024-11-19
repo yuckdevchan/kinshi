@@ -6,39 +6,71 @@
     <title>kinshi@{{ width }}x{{ height }}</title>
 </head>
 <body>
-	<canvas id="screen"></canvas>
-<style>
-body {
-	font-family: monospace;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100%;
-	background-color: black;
-}
-
-body * {
-	margin: 0;
-	padding: 0;
-}
-</style>
-<script>
-	function drawScreen() {
-		const canvas = document.getElementById("screen");
-		const ctx = canvas.getContext("2d");
-		colors = {{ colors|safe }}
-		pixels = {{ pixels }}
-		for (let h = 0; h < {{ height }}; h++) {
-			for (let w = 0; w < {{ width }}; w++) {
-				ctx.fillStyle = colors[pixels[h][w]];
-				ctx.fillRect(w, h, 1000, 1000);
-			}
+	<div class="hud info">
+		<p>kinshi@{{ width }}x{{ height }}</p>
+		<p>{{ number_of_pixels }} px</p>
+		<p id="drawTimeText"></p>
+		<p>version {{ version }}</p>
+	</div>
+	<div class="hud info-bottom">
+		<p>Copyright &copy; 2024 Ethan Martin</p>
+	</div>
+	<canvas id="screen" height="{{ height }}" width="{{ width }}" style="image-rendering: crisp-edges;"></canvas>
+	<style>
+		body {
+			font-family: monospace;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			background-color: white;
 		}
-	}
 
-	drawScreen();
-</script>
+		body * {
+			margin: 0;
+			padding: 0;
+		}
+
+		.hud {
+			position: absolute;
+			color: white;
+			background-color: rgba(0, 0, 0, 0.584);
+			padding: 0.5em;
+			font-family: monospace;
+		}
+
+		.info {
+			top: 0;
+			left: 0;
+		}
+
+		.info-bottom {
+			bottom: 0;
+			left: 0;
+		}
+	</style>
+	<script>
+		console.log("Loaded kinshi@{{ width }}x{{ height }}");
+
+		function drawScreen() {
+			console.log("Drawing initial screen content...");
+			drawTimer = performance.now();
+			const canvas = document.getElementById("screen");
+			const ctx = canvas.getContext("2d");
+			pixels = {{ pixels }}
+			for (let h = 0; h < {{ height }}; h++) {
+				for (let w = 0; w < {{ width }}; w++) {
+					ctx.fillStyle = `rgba(${pixels[h][w][0]}, ${pixels[h][w][1]}, ${pixels[h][w][2]}, ${pixels[h][w][3]})`;
+					ctx.fillRect(w, h, 1, 1);
+				}
+			}
+			console.log("Screen content drawn (" + (performance.now() - drawTimer) + "ms)");
+			document.getElementById("drawTimeText").innerText = `in ${(performance.now() - drawTimer).toFixed(2)}ms`;
+		}
+
+		drawScreen();
+	</script>
 </body>
 </html>
