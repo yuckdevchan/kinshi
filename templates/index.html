@@ -15,7 +15,11 @@
 	<div class="hud info-bottom">
 		<p>Copyright &copy; 2024 Ethan Martin</p>
 	</div>
-	<canvas id="screen" height="{{ height }}" width="{{ width }}" style="image-rendering: crisp-edges;"></canvas>
+	<div class="hud side-panel">
+		<p>kinshi</p>
+		<a href="https://github.com/yuckdevchan/kinshi">github</a>
+	</div>
+	<canvas id="screen" height="{{ height }}" width="{{ width }}" style="image-rendering: pixelated;"></canvas>
 	<style>
 		body {
 			font-family: monospace;
@@ -50,27 +54,56 @@
 			bottom: 0;
 			left: 0;
 		}
+
+		.side-panel {
+			top: 0;
+			right: 0;
+			height: 100vh;
+			box-sizing: border-box;
+			width: 1px;
+			word-wrap: break-word;
+			font-size: 0;
+			opacity: 0;
+			transition: all 0.2s;
+		}
+
+		.side-panel:hover {
+			opacity: 1;
+			width: initial;
+			font-size: 1em;
+			transition: all 0.2s;
+		}
+
+		::selection {
+			background-color: hotpink;
+		}
 	</style>
 	<script>
 		console.log("Loaded kinshi@{{ width }}x{{ height }}");
 
-		function drawScreen() {
-			console.log("Drawing initial screen content...");
+		function drawScreen(pixelBuffer) {
+			console.log(pixelBuffer)
 			drawTimer = performance.now();
 			const canvas = document.getElementById("screen");
 			const ctx = canvas.getContext("2d");
-			pixels = {{ pixels }}
+			pixels = pixelBuffer;
 			for (let h = 0; h < {{ height }}; h++) {
 				for (let w = 0; w < {{ width }}; w++) {
 					ctx.fillStyle = `rgba(${pixels[h][w][0]}, ${pixels[h][w][1]}, ${pixels[h][w][2]}, ${pixels[h][w][3]})`;
 					ctx.fillRect(w, h, 1, 1);
 				}
 			}
-			console.log("Screen content drawn (" + (performance.now() - drawTimer) + "ms)");
-			document.getElementById("drawTimeText").innerText = `in ${(performance.now() - drawTimer).toFixed(2)}ms`;
+			document.getElementById("drawTimeText").innerText = `latest frame ${(performance.now() - drawTimer).toFixed(2)} ms`;
 		}
 
-		drawScreen();
+		drawScreen({{ pixels }});
+
+		function updateScreen() {
+			let response = fetch("/api/v1/getPixelBuffer")
+			drawScreen(response);
+		}
+		
+		setInterval(updateScreen(), 500)
 	</script>
 </body>
 </html>

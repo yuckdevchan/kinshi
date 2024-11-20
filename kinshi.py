@@ -15,21 +15,22 @@ class Kinshi:
         self.width = round(self.config["output"]["width"] * self.scale)
         self.height = round(self.config["output"]["height"] * self.scale)
 
-        # pixel_data = [[[random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 1] for x in range(width)] for y in range(height)]
-        self.pixel_data = [[[0, 0, 0, 1] for x in range(self.width)] for y in range(self.height)]
+        self.pixel_data = [[[random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 1] for x in range(self.width)] for y in range(self.height)]
+        # self.pixel_data = [[[0, 0, 0, 1] for x in range(self.width)] for y in range(self.height)]
 
-
-        image = self.decode_png(Path("textures/wotsang.png"))
+        image = self.decode_png(Path("textures/wotang.png"))
         center_x = self.width // 2
         center_y = self.height // 2
 
-        image_height = len(image)
-        image_width = len(image[0])
+        # self.add_image(image, center_x, center_y)
 
+    def add_image(self, image, x, y):
+        image_width = len(image[0])
+        image_height = len(image)
         for y in range(image_height):
             for x in range(image_width):
-                target_y = center_y - image_height // 2 + y
-                target_x = center_x - image_width // 2 + x
+                target_y = y - image_height // 2 + y
+                target_x = x - image_width // 2 + x
                 if 0 <= target_y < self.height and 0 <= target_x < self.width:
                     self.pixel_data[target_y][target_x] = image[y][x]
 
